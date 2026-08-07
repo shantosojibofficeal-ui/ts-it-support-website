@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TS IT Support — Business Hardware, Software &amp; On‑site Service</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="sf">
+
+  <div class="sf-header">
+    <div><div class="sf-logo"><span class="mark">TS</span>TS <em>IT SUPPORT</em></div><div class="sf-tagline">HARDWARE · SOFTWARE · ON-SITE SERVICE</div></div>
+    <div class="sf-nav">
+      <span class="on">Shop</span><span>Services</span><span>Support Plans</span>
+      <span onclick="location.href='mailbox.html'">Track Order</span>
+      <span>Blog</span><span>Contact</span>
+      <span onclick="location.href='admin.html'" style="color:#B7C0D1;">Admin ↗</span>
+    </div>
+    <div class="sf-actions">
+      <div class="sf-status"><span class="dot"></span>SUPPORT ONLINE</div>
+      <div class="sf-icon" title="Search"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
+      <div class="sf-icon" title="Account" onclick="location.href='mailbox.html'"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></div>
+      <div class="sf-icon" id="cartBtn" title="Cart"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2l2.6 12.6a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 2-1.6L21 7H6"/></svg><span class="sf-cart-badge" id="cartBadge" style="display:none;">0</span></div>
+    </div>
+  </div>
+
+  <div class="sf-hero">
+    <div class="sf-hero-copy">
+      <div class="sf-eyebrow">Business IT, in one cart</div>
+      <h2>Buy the hardware, book the technician who sets it up.</h2>
+      <p>Laptops, networking gear and licenses shipped across Dhaka — with remote and on‑site support plans you can add at checkout.</p>
+      <div class="sf-cta-row">
+        <button class="btn btn-primary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Browse hardware</button>
+        <button class="btn btn-ghost" onclick="alert('A technician request would open a booking form here — connect a calendar/booking backend to make this live.')">Book a technician</button>
+      </div>
+    </div>
+    <div class="sf-receipt">
+      <div class="sf-receipt-h"><span>QUOTE #TS-10432</span><span>DRAFT</span></div>
+      <div class="sf-receipt-row"><span>Dell Latitude 5440 ×2</span><b>৳1,84,000</b></div>
+      <div class="sf-receipt-row"><span>TP‑Link 24‑port Switch</span><b>৳21,500</b></div>
+      <div class="sf-receipt-row"><span>AMC — Standard (1yr)</span><b>৳36,000</b></div>
+      <div class="sf-receipt-total"><span>Est. total</span><span>৳2,41,500</span></div>
+    </div>
+  </div>
+
+  <div class="sf-section">
+    <div class="sf-section-head"><h3>Shop by category</h3><span onclick="filterCat('all')">View all →</span></div>
+    <div class="sf-cats" id="catRow">
+      <div class="sf-cat" data-cat="Laptops"><div class="sf-cat-ic"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg></div><p>Laptops &amp; Desktops</p><small>128 items</small></div>
+      <div class="sf-cat" data-cat="Networking"><div class="sf-cat-ic"><svg class="icon" viewBox="0 0 24 24"><path d="M2 8.5a15 15 0 0 1 20 0M5.5 12a10 10 0 0 1 13 0M9 15.5a5 5 0 0 1 6 0"/><circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/></svg></div><p>Networking</p><small>64 items</small></div>
+      <div class="sf-cat" data-cat="Servers"><div class="sf-cat-ic"><svg class="icon" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="7" rx="1.5"/><rect x="4" y="14" width="16" height="7" rx="1.5"/><path d="M8 6.5h.01M8 17.5h.01"/></svg></div><p>Servers &amp; Storage</p><small>37 items</small></div>
+      <div class="sf-cat" data-cat="Peripherals"><div class="sf-cat-ic"><svg class="icon" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="6"/><path d="M12 2v8"/></svg></div><p>Peripherals</p><small>212 items</small></div>
+      <div class="sf-cat" data-cat="Software"><div class="sf-cat-ic"><svg class="icon" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/></svg></div><p>Software Licenses</p><small>45 items</small></div>
+      <div class="sf-cat" data-cat="Plans"><div class="sf-cat-ic"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6l7-3Z"/></svg></div><p>Support Plans</p><small>6 plans</small></div>
+    </div>
+  </div>
+
+  <div class="sf-section" style="padding-top:0;" id="products">
+    <div class="sf-section-head"><h3 id="prodHeading">Featured products</h3><span id="clearFilter" style="display:none;" onclick="filterCat('all')">Clear filter ✕</span></div>
+    <div class="sf-products" id="prodGrid"></div>
+  </div>
+
+  <div class="sf-trust">
+    <div class="sf-trust-item"><b>500+</b><span>Businesses supported</span></div>
+    <div class="sf-trust-item"><b>24/7</b><span>Remote support desk</span></div>
+    <div class="sf-trust-item"><b>Same‑day</b><span>Dhaka delivery</span></div>
+    <div class="sf-trust-item"><b>6 plans</b><span>AMC &amp; support tiers</span></div>
+  </div>
+
+  <div class="sf-footer">
+    <div class="sf-footer-grid">
+      <div><div class="sf-logo" style="font-size:13px;"><span class="mark" style="width:22px;height:22px;font-size:9px;">TS</span>TS <em>IT SUPPORT</em></div><p style="font-size:11px;color:#8592AA;margin-top:9px;max-width:180px;">Hardware, software and support — shipped and scheduled from one place.</p></div>
+      <div><h6>Shop</h6><ul><li onclick="filterCat('Laptops')">Laptops</li><li onclick="filterCat('Networking')">Networking</li><li onclick="filterCat('Servers')">Servers</li><li onclick="filterCat('Software')">Software</li></ul></div>
+      <div><h6>Services</h6><ul><li>On‑site support</li><li>Remote support</li><li>AMC plans</li><li>Request bulk quote (B2B)</li></ul></div>
+      <div><h6>Company</h6><ul><li>About</li><li>Contact</li><li>Blog</li></ul></div>
+      <div><h6>Account</h6><ul><li onclick="location.href='mailbox.html'">My orders</li><li onclick="location.href='mailbox.html'">Track order</li><li>Warranty / RMA claim</li><li>Help center</li></ul></div>
+    </div>
+    <div class="sf-footer-bottom"><span>© TS IT Support — design demo</span><span class="live"><span class="dot"></span>All services operational</span></div>
+  </div>
+</div>
+
+<div class="wa-float" onclick="alert('This would open the WhatsApp AI assistant — wire it to your WhatsApp Business API + LLM backend to make it live.')">
+  <div class="wa-tooltip">AI assistant on WhatsApp — instant reply</div>
+  <svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="M21 11.5a8.4 8.4 0 0 1-9.8 8.3 8.5 8.5 0 0 1-3-1.1L3 20l1.3-5a8.4 8.4 0 0 1-1.1-4.2A8.4 8.4 0 0 1 12 3.1a8.5 8.5 0 0 1 9 8.4Z"/></svg>
+</div>
+
+<!-- cart drawer -->
+<div class="overlay" id="overlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head"><h4>Your cart</h4><button class="drawer-close" id="drawerClose">✕</button></div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-foot" id="drawerFoot"></div>
+</div>
+
+<div class="toast" id="toast"><span class="dot2"></span><span id="toastMsg"></span></div>
+
+<script type="module" src="firebase-config.js"></script>
+<script src="products.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
