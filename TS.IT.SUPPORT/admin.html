@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — TS IT Support</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+:root{--bg:#0B1220;--surface:#12192C;--border:#1E2A44;--text:#E7ECF5;--muted:#6C789A;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center;overflow-y:auto;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 26px 24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;}
+.modal h4{margin:0 0 18px;font-size:15px;color:var(--text);}
+.modal-field{margin-bottom:13px;}
+.modal-field label{display:block;font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.modal-field input,.modal-field select,.modal-field textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:9px 11px;font-family:var(--font-mono);font-size:12px;color:var(--text);outline:none;box-sizing:border-box;}
+.modal-field textarea{min-height:70px;resize:vertical;}
+.modal-field input:focus,.modal-field select:focus,.modal-field textarea:focus{border-color:var(--teal-bright);}
+.modal-foot{display:flex;gap:9px;justify-content:flex-end;margin-top:18px;}
+.modal-foot button{font-family:var(--font-mono);font-size:11px;font-weight:600;padding:8px 16px;border-radius:7px;border:none;cursor:pointer;}
+.modal-cancel{background:var(--bg);border:1px solid var(--border)!important;color:var(--text);}
+.modal-save{background:var(--teal-bright);color:#0B1220;}
+.modal-del{background:var(--red);color:#fff;}
+.file-upload-area{border:2px dashed var(--border);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:.2s;margin-top:6px;}
+.file-upload-area:hover{border-color:var(--teal-bright);}
+.file-upload-area.has-file{border-color:var(--teal-bright);background:rgba(63,224,208,.05);}
+.file-upload-area p{font-size:11px;color:var(--muted);margin-top:6px;}
+.file-name-display{font-family:var(--font-mono);font-size:11px;color:var(--teal-bright);margin-top:6px;}
+.pay-method-list{display:flex;flex-direction:column;gap:8px;}
+.pay-method-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;}
+.pay-method-item .pm-name{font-family:var(--font-mono);font-size:12px;color:var(--text);font-weight:600;}
+.pay-method-item .pm-detail{font-size:11px;color:var(--muted);margin-top:3px;}
+.pay-method-item .pm-actions{display:flex;gap:6px;}
+.pm-toggle{font-family:var(--font-mono);font-size:9.5px;padding:4px 9px;border-radius:6px;cursor:pointer;border:none;}
+.pm-on{background:rgba(47,168,107,.15);color:#3DBE7E;}
+.pm-off{background:rgba(229,99,122,.12);color:var(--red);}
+.chat-list{display:flex;flex-direction:column;gap:8px;}
+.chat-item{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 15px;cursor:pointer;transition:.15s;}
+.chat-item:hover{border-color:var(--teal-bright);}
+.chat-item.unread{border-color:rgba(63,224,208,.4);}
+.chat-item-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.chat-item-name{font-size:12.5px;font-weight:700;color:var(--text);}
+.chat-item-time{font-family:var(--font-mono);font-size:10px;color:var(--muted);}
+.chat-item-preview{font-size:11.5px;color:var(--muted);}
+.chat-unread-dot{width:7px;height:7px;border-radius:50%;background:var(--teal-bright);display:inline-block;margin-left:6px;}
+.chat-window{display:flex;flex-direction:column;height:500px;background:var(--bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.chat-win-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.chat-win-head h5{font-size:13px;color:var(--text);}
+.chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;}
+.msg{max-width:75%;padding:9px 12px;border-radius:10px;font-size:12px;line-height:1.5;}
+.msg-user{background:#1E2A44;color:var(--text);align-self:flex-start;border-radius:10px 10px 10px 2px;}
+.msg-admin{background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;align-self:flex-end;border-radius:10px 10px 2px 10px;}
+.msg-time{font-family:var(--font-mono);font-size:9px;opacity:.6;margin-top:3px;}
+.chat-input-row{padding:12px;border-top:1px solid var(--border);display:flex;gap:9px;}
+.chat-input-row input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--font-sans);font-size:12.5px;color:var(--text);outline:none;}
+.chat-input-row input:focus{border-color:var(--teal-bright);}
+.chat-send-btn{background:var(--teal-bright);color:#0B1220;border:none;border-radius:8px;padding:9px 16px;font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer;}
+.order-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.od-field{background:var(--bg);border-radius:7px;padding:10px 12px;}
+.od-label{font-family:var(--font-mono);font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;}
+.od-val{font-size:12.5px;color:var(--text);font-weight:600;}
+.txid-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-family:var(--font-mono);font-size:12px;color:var(--text);outline:none;box-sizing:border-box;margin-top:6px;}
+.txid-input:focus{border-color:var(--teal-bright);}
+</style>
+</head>
+<body>
+<div class="ad-page">
+  <div class="ad-side">
+    <div class="ad-brand"><span class="mark">TS</span>ADMIN</div>
+    <div class="ad-nav-label">Overview</div>
+    <div class="ad-nav"><a class="on" onclick="showSection('dashboard')"><svg class="icon" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg><span>Dashboard</span></a></div>
+    <div class="ad-nav-label">Sales</div>
+    <div class="ad-nav">
+      <a onclick="showSection('orders')"><svg class="icon" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Orders</span></a>
+      <a onclick="showSection('catalog')"><svg class="icon" viewBox="0 0 24 24"><path d="M21 8L12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/></svg><span>Catalog</span></a>
+      <a onclick="showSection('customers')"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.6 2.9-6 5.5-6s5.5 2.4 5.5 6"/></svg><span>Customers</span></a>
+      <a onclick="showSection('payments')"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg><span>Payment Methods</span></a>
+    </div>
+    <div class="ad-nav-label">Support</div>
+    <div class="ad-nav">
+      <a onclick="showSection('chat')"><svg class="icon" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9.8 8.3 8.5 8.5 0 0 1-3-1.1L3 20l1.3-5a8.4 8.4 0 0 1-1.1-4.2A8.4 8.4 0 0 1 12 3.1a8.5 8.5 0 0 1 9 8.4Z"/></svg><span>Support Chat</span><span id="chatBadge" style="display:none;background:var(--red);color:#fff;font-size:9px;font-family:var(--font-mono);padding:2px 6px;border-radius:8px;margin-left:auto;"></span></a>
+      <a onclick="doLogout()"><svg class="icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg><span>Logout</span></a>
+      <a onclick="location.href='index.html'"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9M5 10v9a1 1 0 0 0 1 1h4v-5h4v5h4a1 1 0 0 0 1-1v-9"/></svg><span>Back to storefront</span></a>
+    </div>
+  </div>
+
+  <div class="ad-main">
+    <div class="ad-top">
+      <div class="ad-search"><svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px;"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Search orders, products, customers…</div>
+      <div class="ad-top-right">
+        <div class="ad-bell"><svg class="icon" viewBox="0 0 24 24" style="width:15px;height:15px;"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg></div>
+        <div class="ad-profile"><div class="ad-avatar">TS</div>Admin — Owner</div>
+      </div>
+    </div>
+
+    <div class="ad-body">
+
+      <!-- DASHBOARD SECTION -->
+      <div id="sec-dashboard">
+        <div class="ad-h-row">
+          <div><div class="ad-h">Dashboard</div><div class="ad-sub" style="margin-bottom:0;">Here's how the store is doing today.</div></div>
+          <div class="date-filter"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;width:14px;height:14px;"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Today</div>
+        </div>
+        <div style="margin-bottom:22px;"></div>
+        <div class="ad-stats">
+          <div class="ad-stat"><div class="ad-stat-ic" style="background:rgba(63,224,208,.12);color:var(--teal-bright);"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5c0-1.4 1.3-2.5 3-2.5s3 1 3 2.2c0 2.8-6 1.4-6 4.2 0 1.3 1.3 2.3 3 2.3s3-1 3-2.3"/></svg></div><span>Total revenue</span><b id="statSales">৳0</b><span class="delta up">All orders</span></div>
+          <div class="ad-stat"><div class="ad-stat-ic" style="background:rgba(110,168,255,.12);color:#6EA8FF;"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px;"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div><span>Orders</span><b id="statOrders">0</b><span class="delta up">All time</span></div>
+          <div class="ad-stat"><div class="ad-stat-ic" style="background:rgba(255,180,84,.12);color:var(--amber-bright);"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px;"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.6 17a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div><span>Pending verification</span><b id="statPending">0</b><span class="delta down">Needs review</span></div>
+          <div class="ad-stat"><div class="ad-stat-ic" style="background:rgba(229,99,122,.12);color:var(--red);"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px;"><rect x="4" y="3" width="16" height="7" rx="1.5"/><rect x="4" y="14" width="16" height="7" rx="1.5"/><path d="M8 6.5h.01M8 17.5h.01"/></svg></div><span>Low stock items</span><b id="statLow">0</b><span class="delta down">Needs reorder</span></div>
+        </div>
+        <div class="ad-row2">
+          <div class="ad-card">
+            <h4><svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M3 3v18h18"/><rect x="6" y="12" width="3" height="6"/><rect x="11" y="8" width="3" height="10"/><rect x="16" y="5" width="3" height="13"/></svg>Sales this week</h4>
+            <div class="ad-chart">
+              <div class="ad-bar-wrap"><div class="ad-bar" style="height:38px;width:22px;"></div><span>Mon</span></div>
+              <div class="ad-bar-wrap"><div class="ad-bar" style="height:58px;width:22px;"></div><span>Tue</span></div>
+              <div class="ad-bar-wrap"><div class="ad-bar" style="height:44px;width:22px;"></div><span>Wed</span></div>
+              <div class="ad-bar-wrap"><div class="ad-bar" style="height:70px;width:22px;"></div><span>Thu</span></div>
+              <div class="ad-bar-wrap"><div class="ad-bar" style="height:52px;width:22px;"></div><span>Fri</span></div>
+              <div class="ad-bar-wrap"><div class="ad-bar" style="height:90px;width:22px;"></div><span>Sat</span></div>
+              <div class="ad-bar-wrap"><div class="ad-bar" style="height:66px;width:22px;"></div><span>Sun</span></div>
+            </div>
+          </div>
+          <div class="ad-card">
+            <h4><svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M10.3 3.9 2.6 17a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>Low stock alerts</h4>
+            <div id="lowStockList"><div style="color:#6C789A;font-size:12px;">Loading…</div></div>
+          </div>
+        </div>
+        <div class="ad-card" style="margin-bottom:16px;">
+          <div class="ad-card-head"><h4 style="margin-bottom:0;">Recent orders — Pending Verification</h4></div>
+          <table><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Method</th><th>TXID / SS</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="ordersBody"></tbody></table>
+          <p id="noOrders" style="color:#6C789A;font-size:12px;padding:16px 4px 4px;display:none;">No orders yet — place one from the storefront.</p>
+        </div>
+      </div>
+
+      <!-- ORDERS SECTION -->
+      <div id="sec-orders" style="display:none;">
+        <div class="ad-h-row"><div><div class="ad-h">Orders</div><div class="ad-sub" style="margin-bottom:0;">All customer orders across all users.</div></div></div>
+        <div style="margin-bottom:22px;"></div>
+        <div class="ad-card">
+          <table><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Method</th><th>TXID / SS</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="ordersBody2"></tbody></table>
+          <p id="noOrders2" style="color:#6C789A;font-size:12px;padding:16px 4px 4px;display:none;">No orders yet.</p>
+        </div>
+      </div>
+
+      <!-- CATALOG SECTION -->
+      <div id="sec-catalog" style="display:none;">
+        <div class="ad-h-row">
+          <div><div class="ad-h">Catalog</div><div class="ad-sub" style="margin-bottom:0;">Manage products — attach downloadable files (ZIP, PDF, etc.) buyers receive after payment approval.</div></div>
+          <div class="ad-add-btn" onclick="openAddModal()"><svg class="icon" viewBox="0 0 24 24" style="width:12px;height:12px;"><path d="M12 5v14M5 12h14"/></svg>Add product</div>
+        </div>
+        <div style="margin-bottom:22px;"></div>
+        <div class="ad-card">
+          <table><thead><tr><th>Product</th><th>SKU</th><th>Category</th><th>Stock</th><th>Price</th><th>File</th><th>Actions</th></tr></thead>
+          <tbody id="catalogBody2"></tbody></table>
+        </div>
+      </div>
+
+      <!-- CUSTOMERS SECTION -->
+      <div id="sec-customers" style="display:none;">
+        <div class="ad-h-row"><div><div class="ad-h">Customers</div><div class="ad-sub" style="margin-bottom:0;">Customers who placed orders.</div></div></div>
+        <div style="margin-bottom:22px;"></div>
+        <div class="ad-card">
+          <div id="customerList" style="color:#6C789A;font-size:13px;padding:12px 4px;">Loading customers…</div>
+        </div>
+      </div>
+
+      <!-- PAYMENT METHODS SECTION -->
+      <div id="sec-payments" style="display:none;">
+        <div class="ad-h-row">
+          <div><div class="ad-h">Payment Methods</div><div class="ad-sub" style="margin-bottom:0;">Configure which payment methods buyers can use at checkout. Add account details customers must pay to.</div></div>
+          <div class="ad-add-btn" onclick="openPayMethodModal()"><svg class="icon" viewBox="0 0 24 24" style="width:12px;height:12px;"><path d="M12 5v14M5 12h14"/></svg>Add method</div>
+        </div>
+        <div style="margin-bottom:22px;"></div>
+        <div class="ad-card">
+          <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">Active methods appear in the cart checkout. Buyers must enter TXID + screenshot after paying, which you verify in Orders.</p>
+          <div class="pay-method-list" id="payMethodList"><div style="color:#6C789A;font-size:12px;">Loading…</div></div>
+        </div>
+      </div>
+
+      <!-- SUPPORT CHAT SECTION -->
+      <div id="sec-chat" style="display:none;">
+        <div class="ad-h-row"><div><div class="ad-h">Support Chat</div><div class="ad-sub" style="margin-bottom:0;">Live chat with customers.</div></div></div>
+        <div style="margin-bottom:22px;"></div>
+        <div style="display:grid;grid-template-columns:260px 1fr;gap:14px;">
+          <div class="ad-card" style="padding:12px;">
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Conversations</div>
+            <div class="chat-list" id="adminChatList"><div style="color:#6C789A;font-size:12px;padding:10px 0;">No chats yet.</div></div>
+          </div>
+          <div>
+            <div id="noChatSelected" style="display:flex;align-items:center;justify-content:center;height:300px;color:var(--muted);font-size:13px;">Select a conversation to view it</div>
+            <div class="chat-window" id="adminChatWindow" style="display:none;">
+              <div class="chat-win-head">
+                <h5 id="chatWinTitle">—</h5>
+                <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);" id="chatWinSub"></span>
+              </div>
+              <div class="chat-messages" id="adminChatMessages"></div>
+              <div class="chat-input-row">
+                <input type="text" id="adminChatInput" placeholder="Type a reply…">
+                <button class="chat-send-btn" onclick="adminSendMsg()">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- ad-body -->
+  </div><!-- ad-main -->
+</div>
+
+<!-- ADD / EDIT PRODUCT MODAL -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal">
+    <h4 id="modalTitle">Add product</h4>
+    <div class="modal-field"><label>Product name</label><input type="text" id="pName" placeholder="e.g. Dell Latitude 5440"></div>
+    <div class="modal-field"><label>SKU / ID</label><input type="text" id="pSku" placeholder="e.g. DL-5440"></div>
+    <div class="modal-field"><label>Category</label>
+      <select id="pCat">
+        <option>Laptops</option><option>Networking</option><option>Servers</option>
+        <option>Peripherals</option><option>Software</option><option>Plans</option>
+      </select>
+    </div>
+    <div class="modal-field"><label>Price (৳)</label><input type="number" id="pPrice" placeholder="e.g. 92000"></div>
+    <div class="modal-field"><label>Spec / Description</label><input type="text" id="pSpec" placeholder="e.g. i5 · 16GB · 512GB SSD"></div>
+    <div class="modal-field"><label>Stock status</label>
+      <select id="pStock" onchange="toggleStockNum()">
+        <option value="in">In stock</option>
+        <option value="low">Low stock</option>
+      </select>
+    </div>
+    <div class="modal-field" id="stockNumField" style="display:none;"><label>Stock quantity</label><input type="number" id="pStockNum" placeholder="e.g. 3"></div>
+    
+    <div class="modal-field">
+      <label>Product image URL (optional)</label>
+      <input type="text" id="pImageUrl" placeholder="https://... or leave blank for icon">
+    </div>
+
+    <div class="modal-field">
+      <label>Downloadable file (ZIP, PDF, document — buyers get this after payment approval)</label>
+      <div class="file-upload-area" id="fileUploadArea" onclick="document.getElementById('pFileInput').click()">
+        <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:none;stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;margin:0 auto;display:block;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <p>Click to upload file (ZIP, PDF, DOCX, any format)</p>
+        <div class="file-name-display" id="fileNameDisplay"></div>
+      </div>
+      <input type="file" id="pFileInput" style="display:none;" onchange="handleFileSelect(this)">
+      <div id="existingFile" style="display:none;margin-top:6px;font-family:var(--font-mono);font-size:11px;color:var(--muted);"></div>
+    </div>
+
+    <div class="modal-foot">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-save" id="saveProductBtn" onclick="saveProduct()">Save product</button>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER DETAIL / APPROVE MODAL -->
+<div class="modal-overlay" id="orderModal">
+  <div class="modal">
+    <h4 id="orderModalTitle">Order Details</h4>
+    <div class="order-detail-grid">
+      <div class="od-field"><div class="od-label">Order ID</div><div class="od-val" id="omOrderId">—</div></div>
+      <div class="od-field"><div class="od-label">Total</div><div class="od-val" id="omTotal">—</div></div>
+      <div class="od-field"><div class="od-label">Payment Method</div><div class="od-val" id="omMethod">—</div></div>
+      <div class="od-field"><div class="od-label">Date</div><div class="od-val" id="omDate">—</div></div>
+      <div class="od-field"><div class="od-label">Customer UID</div><div class="od-val" id="omUid" style="font-size:10px;word-break:break-all;">—</div></div>
+      <div class="od-field"><div class="od-label">Status</div><div class="od-val" id="omStatus">—</div></div>
+    </div>
+    <div style="margin-bottom:12px;">
+      <div class="od-label" style="font-family:var(--font-mono);font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Transaction ID (entered by buyer)</div>
+      <div id="omTxid" style="font-family:var(--font-mono);font-size:12px;color:var(--teal-bright);background:var(--bg);border-radius:7px;padding:8px 12px;">—</div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <div class="od-label" style="font-family:var(--font-mono);font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Payment Screenshot</div>
+      <div id="omSsContainer"><div id="omSsText" style="font-size:12px;color:var(--muted);">No screenshot uploaded.</div></div>
+    </div>
+    <div id="omRejectReason" style="display:none;background:rgba(229,99,122,.1);border-radius:7px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--red);"></div>
+    <div class="modal-foot" id="omFooter">
+      <button class="modal-cancel" onclick="closeOrderModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h4>Delete product?</h4>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:0;" id="deleteMsg">This will permanently remove the product.</p>
+    <div class="modal-foot">
+      <button class="modal-cancel" onclick="closeDeleteModal()">Cancel</button>
+      <button class="modal-del" onclick="confirmDelete()">Yes, delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PAYMENT METHOD MODAL -->
+<div class="modal-overlay" id="payMethodModal">
+  <div class="modal">
+    <h4 id="pmModalTitle">Add Payment Method</h4>
+    <div class="modal-field"><label>Method name</label><input type="text" id="pmName" placeholder="e.g. bKash, Nagad, Bank Transfer"></div>
+    <div class="modal-field"><label>Account / Number / Instructions</label><textarea id="pmDetail" placeholder="e.g. bKash number: 01700000000 (Personal)&#10;Send money then submit TXID + screenshot."></textarea></div>
+    <div class="modal-field"><label>Status</label>
+      <select id="pmStatus"><option value="active">Active (shown at checkout)</option><option value="inactive">Inactive (hidden)</option></select>
+    </div>
+    <div class="modal-foot">
+      <button class="modal-cancel" onclick="closePayMethodModal()">Cancel</button>
+      <button class="modal-save" onclick="savePayMethod()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="dot2"></span><span id="toastMsg"></span></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAfqcMBLr8ZVdSpFTdgYjqiAObAJL1itd8",
+  authDomain: "ts-web-53319.firebaseapp.com",
+  projectId: "ts-web-53319",
+  storageBucket: "ts-web-53319.firebasestorage.app",
+  messagingSenderId: "562970159023",
+  appId: "1:562970159023:web:80ab51402e55e74458f15a",
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+const auth = getAuth(app);
+
+// Admin auth guard
+const ADMIN_EMAILS = ['ts@admin.com'];
+onAuthStateChanged(auth, user => {
+  if(!user || !ADMIN_EMAILS.includes(user.email)){
+    location.href = 'admin-login.html';
+  }
+});
+
+window._db = db; window._storage = storage;
+window._col = (n) => collection(db, n);
+window._addDoc = addDoc; window._updateDoc = updateDoc;
+window._deleteDoc = deleteDoc; window._doc = (c, id) => doc(db, c, id);
+window._setDoc = setDoc; window._getDocs = getDocs;
+window._ref = ref; window._uploadBytes = uploadBytes;
+window._getDownloadURL = getDownloadURL; window._deleteObject = deleteObject;
+window._query = query; window._orderBy = orderBy;
+window._onSnapshot = onSnapshot; window._serverTimestamp = serverTimestamp;
+
+window.doLogout = async () => { await signOut(auth); location.href = 'admin-login.html'; };
+
+window.dispatchEvent(new Event('firebaseReady'));
+</script>
+
+<script src="products.js"></script>
+<script>
+function money(n){ return '৳' + Number(n).toLocaleString('en-US'); }
+function showToast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+// ---- Section switching ----
+function showSection(name){
+  ['dashboard','orders','catalog','customers','payments','chat'].forEach(s=>{
+    const el = document.getElementById('sec-'+s);
+    if(el) el.style.display = s===name ? '' : 'none';
+  });
+  document.querySelectorAll('.ad-nav a').forEach(a=>a.classList.remove('on'));
+  if(name==='dashboard') renderOrders();
+  if(name==='orders') renderOrders2();
+  if(name==='catalog') renderCatalog2();
+  if(name==='customers') renderCustomers();
+  if(name==='payments') renderPayMethods();
+  if(name==='chat') renderAdminChats();
+}
+window.showSection = showSection;
+
+// ---- Orders from Firestore ----
+async function getAllOrders(){
+  if(!window._getDocs) return [];
+  try {
+    // Collect orders from Firestore orders collection
+    const snap = await window._getDocs(window._col('orders'));
+    return snap.docs.map(d=>({...d.data(), _docId: d.id}));
+  } catch(e){ return []; }
+}
+
+function statusPill(status){
+  const map = {
+    'Pending Verification':['st-pending','PENDING'],
+    'Paid':['st-processing','PAID'],
+    'Ready':['st-delivered','READY'],
+    'Downloaded':['st-delivered','DOWNLOADED'],
+    'Rejected':['st-cancelled','REJECTED'],
+  };
+  const [cls,label] = map[status]||['st-pending',status.toUpperCase()];
+  return `<span class="status-pill ${cls}">${label}</span>`;
+}
+
+function orderRow(o){
+  const txDisplay = o.txid ? `<span style="font-family:var(--font-mono);font-size:10px;color:var(--teal-bright);">${o.txid.substring(0,12)}…</span>` : '<span style="color:var(--muted);font-size:10px;">—</span>';
+  let actions = `<div class="row-actions"><span class="icon-btn" onclick="openOrderModal('${o._docId||o.id}')">View</span>`;
+  if(o.status==='Pending Verification'){
+    actions += `<span class="icon-btn" onclick="approveOrder('${o._docId||o.id}')">✓ Approve</span><span class="icon-btn" onclick="rejectOrderPrompt('${o._docId||o.id}')">✕ Reject</span>`;
+  }
+  actions += '</div>';
+  const custName = o.customerName || o.uid?.substring(0,8) || '—';
+  return `<tr>
+    <td class="mono">#${o.id}</td>
+    <td style="font-size:11px;">${custName}<br><span style="color:var(--muted);font-size:10px;">${o.customerEmail||''}</span></td>
+    <td class="mono">${money(o.total)}</td>
+    <td>${o.method}</td>
+    <td>${txDisplay}</td>
+    <td class="mono">${o.date}</td>
+    <td>${statusPill(o.status)}</td>
+    <td>${actions}</td>
+  </tr>`;
+}
+
+async function renderOrders(){
+  const orders = await getAllOrders();
+  document.getElementById('noOrders').style.display = orders.length ? 'none' : 'block';
+  const revenue = orders.filter(o=>o.status!=='Rejected').reduce((s,o)=>s+o.total,0);
+  document.getElementById('statSales').textContent = money(revenue);
+  document.getElementById('statOrders').textContent = orders.length;
+  document.getElementById('statPending').textContent = orders.filter(o=>o.status==='Pending Verification').length;
+  const pending = orders.filter(o=>o.status==='Pending Verification');
+  document.getElementById('ordersBody').innerHTML = (pending.length?pending:orders).map(o=>orderRow(o)).join('');
+}
+
+async function renderOrders2(){
+  const orders = await getAllOrders();
+  document.getElementById('noOrders2').style.display = orders.length ? 'none' : 'block';
+  document.getElementById('ordersBody2').innerHTML = orders.map(o=>orderRow(o)).join('');
+}
+
+// ---- Order Modal ----
+let viewingOrderDocId = null;
+window.openOrderModal = async function(docId){
+  viewingOrderDocId = docId;
+  const orders = await getAllOrders();
+  const o = orders.find(x=>(x._docId||x.id)===docId);
+  if(!o) return;
+  document.getElementById('omOrderId').textContent = '#' + o.id;
+  document.getElementById('omTotal').textContent = money(o.total);
+  document.getElementById('omMethod').textContent = o.method;
+  document.getElementById('omDate').textContent = o.date;
+  document.getElementById('omUid').textContent = o.uid || '—';
+  document.getElementById('omStatus').textContent = o.status;
+  document.getElementById('omTxid').textContent = o.txid || 'Not provided';
+  
+  // Screenshot
+  const ssC = document.getElementById('omSsContainer');
+  if(o.screenshotUrl){
+    ssC.innerHTML = `<a href="${o.screenshotUrl}" target="_blank"><img src="${o.screenshotUrl}" style="max-width:100%;border-radius:7px;border:1px solid var(--border);cursor:pointer;" alt="Payment screenshot"></a>`;
+  } else {
+    ssC.innerHTML = '<div style="font-size:12px;color:var(--muted);">No screenshot uploaded.</div>';
+  }
+  
+  // Reject reason
+  const rr = document.getElementById('omRejectReason');
+  if(o.status==='Rejected' && o.reason){ rr.style.display=''; rr.textContent='Rejection reason: ' + o.reason; }
+  else { rr.style.display='none'; }
+  
+  // Footer buttons
+  const foot = document.getElementById('omFooter');
+  if(o.status==='Pending Verification'){
+    foot.innerHTML = `<button class="modal-cancel" onclick="closeOrderModal()">Close</button>
+      <button class="modal-del" onclick="rejectOrderPrompt('${docId}');closeOrderModal()">Reject</button>
+      <button class="modal-save" onclick="approveOrder('${docId}');closeOrderModal()">✓ Approve & Notify</button>`;
+  } else {
+    foot.innerHTML = `<button class="modal-cancel" onclick="closeOrderModal()">Close</button>`;
+  }
+  document.getElementById('orderModal').classList.add('show');
+};
+window.closeOrderModal = () => document.getElementById('orderModal').classList.remove('show');
+
+window.approveOrder = async function(docId){
+  try {
+    await window._updateDoc(window._doc('orders', docId), {status:'Ready'});
+    showToast('Order approved — buyer can now download from Mailbox');
+    renderOrders(); renderOrders2();
+  } catch(e){ showToast('Error: ' + e.message); }
+};
+
+window.rejectOrderPrompt = async function(docId){
+  const reason = prompt('Reason for rejection (shown to buyer):', 'Transaction ID not found or payment not received.');
+  if(reason===null) return;
+  try {
+    await window._updateDoc(window._doc('orders', docId), {status:'Rejected', reason});
+    showToast('Order rejected — buyer notified in Mailbox');
+    renderOrders(); renderOrders2();
+  } catch(e){ showToast('Error: ' + e.message); }
+};
+
+// ---- Customers ----
+async function renderCustomers(){
+  const orders = await getAllOrders();
+  const el = document.getElementById('customerList');
+  if(!orders.length){ el.innerHTML='<p style="color:#6C789A;font-size:13px;">No customers yet.</p>'; return; }
+  const byUid = {};
+  orders.forEach(o=>{ if(!byUid[o.uid]) byUid[o.uid]={uid:o.uid,name:o.customerName||'—',email:o.customerEmail||'—',orders:0,total:0}; byUid[o.uid].orders++; byUid[o.uid].total+=o.total; });
+  el.innerHTML = `<table><thead><tr><th>Customer</th><th>Email</th><th>Orders</th><th>Total spent</th></tr></thead><tbody>`
+    + Object.values(byUid).map(c=>`<tr><td>${c.name}</td><td class="mono" style="font-size:10.5px;">${c.email}</td><td class="mono">${c.orders}</td><td class="mono">${money(c.total)}</td></tr>`).join('')
+    + '</tbody></table>';
+}
+
+// ---- Products (Firestore) ----
+let firestoreReady = false;
+let products = [...PRODUCTS];
+let editingDocId = null;
+let deletingDocId = null;
+let selectedFile = null;
+
+window.addEventListener('firebaseReady', async ()=>{ firestoreReady = true; await loadProducts(); });
+
+async function loadProducts(){
+  if(!firestoreReady) return;
+  try {
+    const snap = await window._getDocs(window._col('products'));
+    if(snap.empty){
+      for(const p of PRODUCTS) await window._setDoc(window._doc('products', p.id), p);
+      products = [...PRODUCTS];
+    } else {
+      products = snap.docs.map(d=>({...d.data(), _docId: d.id}));
+    }
+    renderCatalog2(); renderLowStock();
+    document.getElementById('statLow').textContent = products.filter(p=>p.stock==='low').length;
+  } catch(e){ products = [...PRODUCTS]; renderCatalog2(); renderLowStock(); }
+}
+
+function renderLowStock(){
+  const low = products.filter(p=>p.stock==='low');
+  const el = document.getElementById('lowStockList');
+  if(!low.length){ el.innerHTML='<div style="color:#6C789A;font-size:12px;">No low stock items.</div>'; return; }
+  el.innerHTML = low.map(p=>`<div class="ad-low-item"><span>${p.name}</span><b>${p.stockNum} left</b></div>`).join('');
+}
+
+function renderCatalog2(){
+  document.getElementById('catalogBody2').innerHTML = products.map(p=>`
+    <tr>
+      <td>${p.name}</td>
+      <td class="mono">${p.id}</td>
+      <td>${p.cat}</td>
+      <td>${p.stock==='low' ? p.stockNum : '—'}</td>
+      <td class="mono">${money(p.price)}</td>
+      <td>${p.fileUrl ? `<span style="color:var(--teal-bright);font-size:10.5px;font-family:var(--font-mono);">📎 ${p.fileName||'file'}</span>` : '<span style="color:var(--muted);font-size:10.5px;">—</span>'}</td>
+      <td><div class="row-actions">
+        <span class="icon-btn" onclick="openEditModal('${p._docId||p.id}')">Edit</span>
+        <span class="icon-btn" onclick="openDeleteModal('${p._docId||p.id}','${p.name.replace(/'/g,"\\'")}')">Delete</span>
+      </div></td>
+    </tr>`).join('');
+}
+
+// ---- Product Modal ----
+function toggleStockNum(){ document.getElementById('stockNumField').style.display = document.getElementById('pStock').value==='low' ? '' : 'none'; }
+window.toggleStockNum = toggleStockNum;
+
+window.handleFileSelect = function(input){
+  selectedFile = input.files[0];
+  if(selectedFile){
+    document.getElementById('fileNameDisplay').textContent = '📎 ' + selectedFile.name;
+    document.getElementById('fileUploadArea').classList.add('has-file');
+  }
+};
+
+function closeModal(){ document.getElementById('productModal').classList.remove('show'); editingDocId=null; selectedFile=null; document.getElementById('fileNameDisplay').textContent=''; document.getElementById('fileUploadArea').classList.remove('has-file'); document.getElementById('pFileInput').value=''; }
+window.closeModal = closeModal;
+
+function openAddModal(){
+  editingDocId = null; selectedFile = null;
+  document.getElementById('modalTitle').textContent = 'Add product';
+  ['pName','pSku','pPrice','pSpec','pStockNum','pImageUrl'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pStock').value='in';
+  document.getElementById('pCat').value='Laptops';
+  document.getElementById('stockNumField').style.display='none';
+  document.getElementById('fileNameDisplay').textContent='';
+  document.getElementById('fileUploadArea').classList.remove('has-file');
+  document.getElementById('existingFile').style.display='none';
+  document.getElementById('productModal').classList.add('show');
+}
+window.openAddModal = openAddModal;
+
+function openEditModal(docId){
+  const p = products.find(x=>(x._docId||x.id)===docId);
+  if(!p) return;
+  editingDocId = docId; selectedFile = null;
+  document.getElementById('modalTitle').textContent = 'Edit product';
+  document.getElementById('pName').value = p.name;
+  document.getElementById('pSku').value = p.id;
+  document.getElementById('pPrice').value = p.price;
+  document.getElementById('pSpec').value = p.spec||'';
+  document.getElementById('pStock').value = p.stock;
+  document.getElementById('pCat').value = p.cat;
+  document.getElementById('pStockNum').value = p.stockNum||'';
+  document.getElementById('pImageUrl').value = p.imageUrl||'';
+  document.getElementById('stockNumField').style.display = p.stock==='low' ? '' : 'none';
+  document.getElementById('fileNameDisplay').textContent='';
+  document.getElementById('fileUploadArea').classList.remove('has-file');
+  if(p.fileUrl){
+    document.getElementById('existingFile').style.display='';
+    document.getElementById('existingFile').innerHTML = `Current file: <a href="${p.fileUrl}" target="_blank" style="color:var(--teal-bright);">${p.fileName||'download'}</a> (upload new to replace)`;
+  } else {
+    document.getElementById('existingFile').style.display='none';
+  }
+  document.getElementById('productModal').classList.add('show');
+}
+window.openEditModal = openEditModal;
+
+async function saveProduct(){
+  const name = document.getElementById('pName').value.trim();
+  const id   = document.getElementById('pSku').value.trim();
+  const price= parseInt(document.getElementById('pPrice').value)||0;
+  const spec = document.getElementById('pSpec').value.trim();
+  const cat  = document.getElementById('pCat').value;
+  const stock= document.getElementById('pStock').value;
+  const stockNum = parseInt(document.getElementById('pStockNum').value)||0;
+  const imageUrl = document.getElementById('pImageUrl').value.trim();
+  if(!name||!id){ showToast('Name and SKU are required'); return; }
+
+  const btn = document.getElementById('saveProductBtn');
+  btn.disabled=true; btn.textContent='Saving…';
+
+  let fileUrl = null, fileName = null;
+  
+  // Upload file if selected
+  if(selectedFile){
+    try {
+      const storageRef = window._ref(window._storage, `products/${id}/${selectedFile.name}`);
+      await window._uploadBytes(storageRef, selectedFile);
+      fileUrl = await window._getDownloadURL(storageRef);
+      fileName = selectedFile.name;
+    } catch(e){ showToast('File upload failed: ' + e.message); btn.disabled=false; btn.textContent='Save product'; return; }
+  }
+
+  const existingProduct = products.find(x=>(x._docId||x.id)===(editingDocId||id));
+  const data = {
+    id, name, price, spec, cat, stock,
+    stockNum: stock==='low' ? stockNum : null,
+    icon:'<rect x="3" y="4" width="18" height="12" rx="2"/>',
+    imageUrl: imageUrl || (existingProduct?.imageUrl || null),
+    fileUrl: fileUrl || (existingProduct?.fileUrl || null),
+    fileName: fileName || (existingProduct?.fileName || null),
+  };
+
+  try {
+    if(editingDocId){
+      await window._updateDoc(window._doc('products', editingDocId), data);
+      showToast('Product updated — ' + name);
+    } else {
+      await window._setDoc(window._doc('products', id), data);
+      showToast('Product added — ' + name);
+    }
+    closeModal(); await loadProducts();
+  } catch(e){ showToast('Error: ' + e.message); }
+  btn.disabled=false; btn.textContent='Save product';
+}
+window.saveProduct = saveProduct;
+
+function openDeleteModal(docId, name){ deletingDocId = docId; document.getElementById('deleteMsg').textContent = 'Delete "'+name+'"? This cannot be undone.'; document.getElementById('deleteModal').classList.add('show'); }
+window.openDeleteModal = openDeleteModal;
+function closeDeleteModal(){ document.getElementById('deleteModal').classList.remove('show'); deletingDocId=null; }
+window.closeDeleteModal = closeDeleteModal;
+
+async function confirmDelete(){
+  if(!deletingDocId) return;
+  try {
+    const p = products.find(x=>(x._docId||x.id)===deletingDocId);
+    if(p?.fileUrl){ try{ await window._deleteObject(window._ref(window._storage, `products/${p.id}/${p.fileName}`)); }catch(e){} }
+    await window._deleteDoc(window._doc('products', deletingDocId));
+    showToast('Product deleted');
+    closeDeleteModal(); await loadProducts();
+  } catch(e){ showToast('Error: ' + e.message); }
+}
+window.confirmDelete = confirmDelete;
+
+// ---- Payment Methods ----
+async function getPayMethods(){
+  try {
+    const snap = await window._getDocs(window._col('paymentMethods'));
+    return snap.docs.map(d=>({...d.data(), _docId: d.id}));
+  } catch(e){ return []; }
+}
+
+async function renderPayMethods(){
+  const methods = await getPayMethods();
+  const el = document.getElementById('payMethodList');
+  if(!methods.length){ el.innerHTML='<p style="color:var(--muted);font-size:12px;">No payment methods yet. Add one above.</p>'; return; }
+  el.innerHTML = methods.map(m=>`
+    <div class="pay-method-item">
+      <div>
+        <div class="pm-name">${m.name}</div>
+        <div class="pm-detail" style="white-space:pre-line;">${m.detail}</div>
+      </div>
+      <div class="pm-actions">
+        <button class="pm-toggle ${m.status==='active'?'pm-on':'pm-off'}" onclick="togglePayMethod('${m._docId}','${m.status}')">${m.status==='active'?'Active':'Inactive'}</button>
+        <span class="icon-btn" onclick="deletePayMethod('${m._docId}')">Delete</span>
+      </div>
+    </div>`).join('');
+}
+
+let editingPmDocId = null;
+function openPayMethodModal(){ editingPmDocId=null; document.getElementById('pmName').value=''; document.getElementById('pmDetail').value=''; document.getElementById('pmStatus').value='active'; document.getElementById('payMethodModal').classList.add('show'); }
+window.openPayMethodModal = openPayMethodModal;
+function closePayMethodModal(){ document.getElementById('payMethodModal').classList.remove('show'); }
+window.closePayMethodModal = closePayMethodModal;
+
+async function savePayMethod(){
+  const name = document.getElementById('pmName').value.trim();
+  const detail = document.getElementById('pmDetail').value.trim();
+  const status = document.getElementById('pmStatus').value;
+  if(!name){ showToast('Method name required'); return; }
+  try {
+    await window._addDoc(window._col('paymentMethods'), {name, detail, status, createdAt: new Date().toISOString()});
+    showToast('Payment method saved — ' + name);
+    closePayMethodModal(); renderPayMethods();
+  } catch(e){ showToast('Error: ' + e.message); }
+}
+window.savePayMethod = savePayMethod;
+
+window.togglePayMethod = async function(docId, currentStatus){
+  const newStatus = currentStatus==='active' ? 'inactive' : 'active';
+  try { await window._updateDoc(window._doc('paymentMethods', docId), {status:newStatus}); renderPayMethods(); } catch(e){ showToast('Error'); }
+};
+window.deletePayMethod = async function(docId){
+  if(!confirm('Delete this payment method?')) return;
+  try { await window._deleteDoc(window._doc('paymentMethods', docId)); renderPayMethods(); } catch(e){ showToast('Error'); }
+};
+
+// ---- Support Chat (Admin side) ----
+let activeChatUid = null;
+let chatUnsubscribe = null;
+
+async function renderAdminChats(){
+  try {
+    const snap = await window._getDocs(window._col('chats'));
+    const chats = snap.docs.map(d=>({uid:d.id,...d.data()}));
+    const el = document.getElementById('adminChatList');
+    if(!chats.length){ el.innerHTML='<div style="color:var(--muted);font-size:12px;padding:10px 0;">No chats yet.</div>'; return; }
+    
+    // Update badge
+    const unread = chats.filter(c=>c.hasUnread).length;
+    const badge = document.getElementById('chatBadge');
+    if(unread>0){ badge.textContent=unread; badge.style.display=''; } else { badge.style.display='none'; }
+    
+    el.innerHTML = chats.map(c=>`
+      <div class="chat-item${c.hasUnread?' unread':''}" onclick="openAdminChat('${c.uid}','${(c.userName||'User').replace(/'/g,"\\'")}','${c.userEmail||''}')">
+        <div class="chat-item-head">
+          <span class="chat-item-name">${c.userName||'User'}${c.hasUnread?'<span class="chat-unread-dot"></span>':''}</span>
+          <span class="chat-item-time">${c.lastTime||''}</span>
+        </div>
+        <div class="chat-item-preview">${c.lastMsg||'No messages'}</div>
+      </div>`).join('');
+  } catch(e){ document.getElementById('adminChatList').innerHTML='<div style="color:var(--muted);font-size:12px;">Error loading chats.</div>'; }
+}
+
+window.openAdminChat = function(uid, name, email){
+  activeChatUid = uid;
+  document.getElementById('noChatSelected').style.display='none';
+  document.getElementById('adminChatWindow').style.display='flex';
+  document.getElementById('chatWinTitle').textContent = name;
+  document.getElementById('chatWinSub').textContent = email;
+  
+  if(chatUnsubscribe) chatUnsubscribe();
+  
+  const msgsCol = collection(window._db, 'chats', uid, 'messages');
+  const q = window._query(msgsCol, window._orderBy('ts','asc'));
+  chatUnsubscribe = window._onSnapshot(q, snap=>{
+    const el = document.getElementById('adminChatMessages');
+    el.innerHTML = snap.docs.map(d=>{
+      const m = d.data();
+      const isAdmin = m.role==='admin';
+      return `<div style="display:flex;flex-direction:column;align-items:${isAdmin?'flex-end':'flex-start'};">
+        <div class="msg ${isAdmin?'msg-admin':'msg-user'}">${m.text}</div>
+        <div class="msg-time" style="align-self:${isAdmin?'flex-end':'flex-start'};color:var(--muted);">${isAdmin?'You':'User'} · ${m.time||''}</div>
+      </div>`;
+    }).join('');
+    el.scrollTop = el.scrollHeight;
+  });
+  
+  // Mark as read
+  window._updateDoc(window._doc('chats', uid), {hasUnread: false}).catch(()=>{});
+};
+
+window.adminSendMsg = async function(){
+  const input = document.getElementById('adminChatInput');
+  const text = input.value.trim();
+  if(!text || !activeChatUid) return;
+  input.value='';
+  const now = new Date();
+  const time = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  try {
+    await window._addDoc(collection(window._db,'chats',activeChatUid,'messages'), {text, role:'admin', ts: window._serverTimestamp(), time});
+    await window._updateDoc(window._doc('chats',activeChatUid), {lastMsg: text, lastTime: time, hasUnread: false});
+  } catch(e){ showToast('Error sending: ' + e.message); }
+};
+
+document.getElementById('adminChatInput')?.addEventListener('keydown', e=>{ if(e.key==='Enter') window.adminSendMsg(); });
+
+// ---- Init ----
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderOrders();
+  document.getElementById('catalogBody2').innerHTML = PRODUCTS.map(p=>`
+    <tr><td>${p.name}</td><td class="mono">${p.id}</td><td>${p.cat}</td><td>${p.stock==='low'?p.stockNum:'—'}</td><td class="mono">${money(p.price)}</td><td>—</td>
+    <td><div class="row-actions"><span class="icon-btn" onclick="openEditModal('${p.id}')">Edit</span><span class="icon-btn" onclick="openDeleteModal('${p.id}','${p.name.replace(/'/g,"\\'")}')">Delete</span></div></td></tr>`).join('');
+  renderLowStock();
+  
+  // Poll for new chats
+  setInterval(async ()=>{
+    try {
+      const snap = await window._getDocs(window._col('chats'));
+      const unread = snap.docs.filter(d=>d.data().hasUnread).length;
+      const badge = document.getElementById('chatBadge');
+      if(unread>0){ badge.textContent=unread; badge.style.display=''; } else { badge.style.display='none'; }
+    } catch(e){}
+  }, 10000);
+});
+</script>
+</body>
+</html>
