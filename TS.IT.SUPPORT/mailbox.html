@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account · Mailbox — TS IT Support</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.account-grid{display:grid;grid-template-columns:220px 1fr;gap:20px;margin-bottom:28px;}
+@media(max-width:700px){.account-grid{grid-template-columns:1fr;}}
+.account-side{background:#fff;border:1px solid #E7EAEF;border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(15,23,42,.06);height:fit-content;}
+.account-avatar{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal-d));display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-mono);font-weight:800;font-size:18px;margin-bottom:10px;}
+.account-name{font-size:14px;font-weight:700;color:#101826;margin-bottom:2px;}
+.account-email{font-size:11px;color:#8592AA;font-family:var(--font-mono);margin-bottom:18px;word-break:break-all;}
+.account-menu a{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;font-size:12.5px;font-weight:600;color:#5B6472;cursor:pointer;margin-bottom:2px;text-decoration:none;transition:.15s;}
+.account-menu a:hover{background:#F3F5F8;color:#101826;}
+.account-menu a.on{background:#E9F5F3;color:var(--teal-d);}
+.account-menu a svg{width:14px;height:14px;flex-shrink:0;}
+.logout-btn{width:100%;margin-top:14px;padding:9px;border-radius:9px;background:#FEF1F3;border:1px solid rgba(229,99,122,.2);color:var(--red);font-size:12px;font-weight:700;font-family:var(--font-sans);cursor:pointer;transition:.15s;}
+.logout-btn:hover{background:#FCE3E7;}
+.auth-gate{text-align:center;padding:60px 20px;}
+.auth-gate svg{color:var(--teal);margin:0 auto 16px;display:block;}
+.auth-gate h4{font-size:18px;font-weight:700;margin-bottom:8px;}
+.auth-gate p{font-size:13px;color:#8592AA;margin-bottom:22px;}
+.auth-gate-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+</style>
+</head>
+<body>
+<div class="sf">
+  <div class="sf-header">
+    <div><div class="sf-logo"><span class="mark">TS</span>TS <em>IT SUPPORT</em></div><div class="sf-tagline">HARDWARE · SOFTWARE · ON-SITE SERVICE</div></div>
+    <div class="sf-nav">
+      <span onclick="location.href='index.html'">Shop</span>
+      <span onclick="location.href='services.html'">Services</span>
+      <span onclick="location.href='support-plans.html'">Support Plans</span>
+      <span class="on">My Account</span>
+      <span onclick="location.href='blog.html'">Blog</span>
+      <span onclick="location.href='contact.html'">Contact</span>
+    </div>
+    <div class="sf-actions">
+      <div class="sf-status"><span class="dot"></span>SUPPORT ONLINE</div>
+      <div class="sf-icon" onclick="location.href='index.html'"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2l2.6 12.6a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 2-1.6L21 7H6"/></svg></div>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+    <!-- Not logged in state -->
+    <div id="authGate" style="display:none;">
+      <div class="auth-gate">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>
+        </svg>
+        <h4>Sign in to view your account</h4>
+        <p>Track your orders, download files, and get support — sign in or create a free account.</p>
+        <div class="auth-gate-btns">
+          <button class="btn btn-primary" onclick="location.href='login.html?redirect=mailbox.html'">Sign in</button>
+          <button class="btn btn-ghost" onclick="location.href='register.html'">Create account</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logged in state -->
+    <div id="accountView" style="display:none;">
+      <div class="page-head">My Account</div>
+      <div class="page-sub">Manage your orders, mailbox, and account details.</div>
+
+      <div class="account-grid">
+        <div class="account-side">
+          <div class="account-avatar" id="avatarInitial">?</div>
+          <div class="account-name" id="accountName">—</div>
+          <div class="account-email" id="accountEmail">—</div>
+          <div class="account-menu">
+            <a class="on" href="mailbox.html">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 5 9 9 9-9"/></svg>
+              Mailbox
+            </a>
+            <a href="index.html">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2 3h2l2.6 12.6a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 2-1.6L21 7H6"/></svg>
+              Shop
+            </a>
+            <a href="contact.html">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9.8 8.3 8.5 8.5 0 0 1-3-1.1L3 20l1.3-5a8.4 8.4 0 0 1-1.1-4.2A8.4 8.4 0 0 1 12 3.1a8.5 8.5 0 0 1 9 8.4Z"/></svg>
+              Get support
+            </a>
+          </div>
+          <button class="logout-btn" id="logoutBtn">Sign out</button>
+        </div>
+
+        <div>
+          <div class="card" style="display:flex;gap:12px;align-items:flex-start;background:#F2FBF9;border-color:#CFE8E5;margin-bottom:16px;">
+            <svg class="icon" viewBox="0 0 24 24" style="color:var(--teal-d);width:18px;height:18px;flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+            <p style="color:#2B4B47;">Order confirmations land here — visible only to you after admin approves your payment. Nothing appears on a public link.</p>
+          </div>
+
+          <div class="card" id="mailboxCard">
+            <h5 style="margin-bottom:14px;">Your orders &amp; messages</h5>
+            <div id="mailList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sf-footer">
+    <div class="sf-footer-bottom"><span>© TS IT Support — design demo</span><span class="live"><span class="dot"></span>All services operational</span></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="dot2"></span><span id="toastMsg"></span></div>
+
+<script type="module">
+import { auth, signOut, onAuthStateChanged } from './firebase-config.js';
+
+function money(n){ return '৳' + n.toLocaleString('en-US'); }
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+function renderMailbox(uid){
+  // Load orders for this specific user by uid
+  const key = 'ts_orders_' + uid;
+  const orders = JSON.parse(localStorage.getItem(key) || localStorage.getItem('ts_orders') || '[]');
+  const list = document.getElementById('mailList');
+  if(orders.length === 0){
+    list.innerHTML = '<p style="color:#8592AA;font-size:13px;padding:20px 0;">No orders yet — place an order from the shop and your confirmation will appear here once admin approves it.</p>';
+    return;
+  }
+  list.innerHTML = orders.map(o => {
+    let badge, note;
+    if(o.status === 'Pending Verification'){
+      badge = `<span class="mail-badge badge-pending">Pending verification</span>`;
+      note = `Waiting for admin to confirm your ${o.method} payment.`;
+    } else if(o.status === 'Downloaded'){
+      badge = `<span class="mail-badge badge-done">Downloaded</span>`;
+      note = 'Payment confirmed — file already downloaded.';
+    } else {
+      badge = `<span class="mail-badge badge-ready" style="cursor:pointer;" onclick="downloadOrder('${o.id}','${uid}')">Download</span>`;
+      note = 'Payment confirmed by admin — ready to download.';
+    }
+    return `<div class="mail-item">
+      <div>
+        <span><b>Order #${o.id}</b> — ${money(o.total)}, ${o.date}</span><br>
+        <span style="font-size:11px;color:#8592AA;">${note}</span>
+      </div>
+      ${badge}
+    </div>`;
+  }).join('');
+}
+
+window.downloadOrder = function(id, uid){
+  const key = 'ts_orders_' + uid;
+  const orders = JSON.parse(localStorage.getItem(key) || '[]');
+  const o = orders.find(o => o.id === id);
+  if(o){ o.status = 'Downloaded'; localStorage.setItem(key, JSON.stringify(orders)); }
+  showToast('Downloading files for #' + id + ' (demo)');
+  renderMailbox(uid);
+};
+
+onAuthStateChanged(auth, user => {
+  if(user){
+    document.getElementById('authGate').style.display = 'none';
+    document.getElementById('accountView').style.display = 'block';
+
+    const name = user.displayName || user.email.split('@')[0];
+    document.getElementById('accountName').textContent = name;
+    document.getElementById('accountEmail').textContent = user.email;
+    document.getElementById('avatarInitial').textContent = name.charAt(0).toUpperCase();
+    renderMailbox(user.uid);
+  } else {
+    document.getElementById('authGate').style.display = 'block';
+    document.getElementById('accountView').style.display = 'none';
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await signOut(auth);
+  location.href = 'index.html';
+});
+</script>
+</body>
+</html>

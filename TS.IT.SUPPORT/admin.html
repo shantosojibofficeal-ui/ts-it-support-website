@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — TS IT Support</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:center;justify-content:center;display:none;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 26px 24px;width:100%;max-width:420px;}
+.modal h4{margin:0 0 18px;font-size:15px;}
+.modal-field{margin-bottom:13px;}
+.modal-field label{display:block;font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.modal-field input,.modal-field select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:9px 11px;font-family:var(--font-mono);font-size:12px;color:var(--text);outline:none;box-sizing:border-box;}
+.modal-field input:focus,.modal-field select:focus{border-color:var(--teal-bright);}
+.modal-foot{display:flex;gap:9px;justify-content:flex-end;margin-top:18px;}
+.modal-foot button{font-family:var(--font-mono);font-size:11px;font-weight:600;padding:8px 16px;border-radius:7px;border:none;cursor:pointer;}
+.modal-cancel{background:var(--bg);border:1px solid var(--border)!important;color:var(--text);}
+.modal-save{background:var(--teal-bright);color:#0B1220;}
+.modal-del{background:var(--red);color:#fff;}
+</style>
+</head>
+<body>
+<div class="ad-page">
+  <div class="ad-side">
+    <div class="ad-brand"><span class="mark">TS</span>ADMIN</div>
+    <div class="ad-nav-label">Overview</div>
+    <div class="ad-nav"><a class="on" onclick="showSection('dashboard')"><svg class="icon" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg><span>Dashboard</span></a></div>
+    <div class="ad-nav-label">Sales</div>
+    <div class="ad-nav">
+      <a onclick="showSection('orders')"><svg class="icon" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Orders</span></a>
+      <a onclick="showSection('catalog')"><svg class="icon" viewBox="0 0 24 24"><path d="M21 8L12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/></svg><span>Catalog</span></a>
+      <a onclick="showSection('customers')"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.6 2.9-6 5.5-6s5.5 2.4 5.5 6"/></svg><span>Customers</span></a>
+      <a onclick="comingSoon('Coupons')"><svg class="icon" viewBox="0 0 24 24"><path d="M3 11v2a2 2 0 0 0 2 2h1l10 4V5L6 9H5a2 2 0 0 0-2 2Z"/></svg><span>Coupons</span></a>
+    </div>
+    <div class="ad-nav-label">Operations</div>
+    <div class="ad-nav">
+      <a onclick="comingSoon('Support Tickets')"><svg class="icon" viewBox="0 0 24 24"><path d="M4 13a8 8 0 0 1 16 0"/><rect x="3" y="13" width="4" height="6" rx="1"/><rect x="17" y="13" width="4" height="6" rx="1"/></svg><span>Support Tickets</span></a>
+      <a onclick="comingSoon('Service Bookings')"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg><span>Service Bookings</span></a>
+      <a onclick="comingSoon('Warranty & RMA')"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6l7-3Z"/><path d="M9.5 12.5l1.8 1.8 3.2-3.6"/></svg><span>Warranty &amp; RMA</span></a>
+      <a onclick="comingSoon('B2B Quotes')"><svg class="icon" viewBox="0 0 24 24"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-6h6v6"/></svg><span>B2B Quotes</span></a>
+      <a onclick="comingSoon('AI Agent')"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="8.5" cy="16" r="1.2"/><circle cx="15.5" cy="16" r="1.2"/><path d="M12 11V7M9 4h6"/></svg><span>AI Agent</span></a>
+    </div>
+    <div class="ad-nav-label">Business</div>
+    <div class="ad-nav">
+      <a onclick="comingSoon('Payments')"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5c0-1.4 1.3-2.5 3-2.5s3 1 3 2.2c0 2.8-6 1.4-6 4.2 0 1.3 1.3 2.3 3 2.3s3-1 3-2.3"/></svg><span>Payments</span></a>
+      <a onclick="comingSoon('Staff & Roles')"><svg class="icon" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="13" rx="2"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg><span>Staff &amp; Roles</span></a>
+      <a onclick="doLogout()"><svg class="icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg><span>Logout</span></a>
+      <a onclick="location.href='index.html'"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9M5 10v9a1 1 0 0 0 1 1h4v-5h4v5h4a1 1 0 0 0 1-1v-9"/></svg><span>Back to storefront</span></a>
+    </div>
+  </div>
+
+  <div class="ad-main">
+    <div class="ad-top">
+      <div class="ad-search"><svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px;"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Search orders, products, customers…</div>
+      <div class="ad-top-right">
+        <div class="ad-bell"><svg class="icon" viewBox="0 0 24 24" style="width:15px;height:15px;"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg></div>
+        <div class="ad-profile"><div class="ad-avatar">TS</div>Admin — Owner</div>
+      </div>
+    </div>
+
+    <div class="ad-body">
+
+      <!-- DASHBOARD SECTION -->
+      <div id="sec-dashboard">
+        <div class="ad-h-row">
+          <div><div class="ad-h">Dashboard</div><div class="ad-sub" style="margin-bottom:0;">Here's how the store is doing today.</div></div>
+          <div class="date-filter"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Today</div>
+        </div>
+        <div style="margin-bottom:22px;"></div>
+        <div class="ad-stats">
+          <div class="ad-stat"><div class="ad-stat-ic" style="background:rgba(63,224,208,.12);color:var(--teal-bright);"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5c0-1.4 1.3-2.5 3-2.5s3 1 3 2.2c0 2.8-6 1.4-6 4.2 0 1.3 1.3 2.3 3 2.3s3-1 3-2.3"/></svg></div><span>Today's sales</span><b id="statSales">৳0</b><span class="delta up">Live from orders</span></div>
+          <div class="ad-stat"><div class="ad-stat-ic" style="background:rgba(110,168,255,.12);color:#6EA8FF;"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px;"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div><span>Orders</span><b id="statOrders">0</b><span class="delta up">All time</span></div>
+          <div class="ad-stat"><div class="ad-stat-ic" style="background:rgba(255,180,84,.12);color:var(--amber-bright);"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px;"><path d="M4 13a8 8 0 0 1 16 0"/><rect x="3" y="13" width="4" height="6" rx="1"/><rect x="17" y="13" width="4" height="6" rx="1"/></svg></div><span>Pending verification</span><b id="statPending">0</b><span class="delta down">Needs review</span></div>
+          <div class="ad-stat"><div class="ad-stat-ic" style="background:rgba(229,99,122,.12);color:var(--red);"><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px;"><rect x="4" y="3" width="16" height="7" rx="1.5"/><rect x="4" y="14" width="16" height="7" rx="1.5"/><path d="M8 6.5h.01M8 17.5h.01"/></svg></div><span>Low stock items</span><b id="statLow">0</b><span class="delta down">Needs reorder</span></div>
+        </div>
+        <div class="ad-row2">
+          <div class="ad-card">
+            <h4><svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M3 3v18h18"/><rect x="6" y="12" width="3" height="6"/><rect x="11" y="8" width="3" height="10"/><rect x="16" y="5" width="3" height="13"/></svg>Sales this week</h4>
+            <div class="ad-chart">
+              <div class="ad-bar-wrap"><div class="ad-bar" style="height:38px;width:22px;"></div><span>Mon</span></div>
+              <div class="ad-bar-wrap"><div class="ad-bar" style="height:58px;width:22px;"></div><span>Tue</span></div>
+              <div class="ad-bar-wrap"><div class="ad-bar" style="height:44px;width:22px;"></div><span>Wed</span></div>
+              <div class="ad-bar-wrap"><div class="ad-bar" style="height:70px;width:22px;"></div><span>Thu</span></div>
+              <div class="ad-bar-wrap"><div class="ad-bar" style="height:52px;width:22px;"></div><span>Fri</span></div>
+              <div class="ad-bar-wrap"><div class="ad-bar" style="height:90px;width:22px;"></div><span>Sat</span></div>
+              <div class="ad-bar-wrap"><div class="ad-bar" style="height:66px;width:22px;"></div><span>Sun</span></div>
+            </div>
+          </div>
+          <div class="ad-card">
+            <h4><svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px;"><path d="M10.3 3.9 2.6 17a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>Low stock alerts</h4>
+            <div id="lowStockList"><div style="color:#6C789A;font-size:12px;">Loading…</div></div>
+          </div>
+        </div>
+        <div class="ad-card" style="margin-bottom:16px;">
+          <div class="ad-card-head"><h4 style="margin-bottom:0;"><svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px;"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Recent orders</h4></div>
+          <table><thead><tr><th>Order</th><th>Total</th><th>Method</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="ordersBody"></tbody></table>
+          <p id="noOrders" style="color:#6C789A;font-size:12px;padding:16px 4px 4px;display:none;">No orders yet — place one from the storefront.</p>
+        </div>
+      </div>
+
+      <!-- ORDERS SECTION -->
+      <div id="sec-orders" style="display:none;">
+        <div class="ad-h-row"><div><div class="ad-h">Orders</div><div class="ad-sub" style="margin-bottom:0;">All customer orders.</div></div></div>
+        <div style="margin-bottom:22px;"></div>
+        <div class="ad-card">
+          <table><thead><tr><th>Order</th><th>Total</th><th>Method</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="ordersBody2"></tbody></table>
+          <p id="noOrders2" style="color:#6C789A;font-size:12px;padding:16px 4px 4px;display:none;">No orders yet.</p>
+        </div>
+      </div>
+
+      <!-- CATALOG SECTION -->
+      <div id="sec-catalog" style="display:none;">
+        <div class="ad-h-row">
+          <div><div class="ad-h">Catalog</div><div class="ad-sub" style="margin-bottom:0;">Manage your products.</div></div>
+          <div class="ad-add-btn" onclick="openAddModal()"><svg class="icon" viewBox="0 0 24 24" style="width:12px;height:12px;"><path d="M12 5v14M5 12h14"/></svg>Add product</div>
+        </div>
+        <div style="margin-bottom:22px;"></div>
+        <div class="ad-card">
+          <table><thead><tr><th>Product</th><th>SKU</th><th>Category</th><th>Stock</th><th>Price</th><th>Actions</th></tr></thead>
+          <tbody id="catalogBody2"></tbody></table>
+        </div>
+      </div>
+
+      <!-- CUSTOMERS SECTION -->
+      <div id="sec-customers" style="display:none;">
+        <div class="ad-h-row"><div><div class="ad-h">Customers</div><div class="ad-sub" style="margin-bottom:0;">Customers who placed orders.</div></div></div>
+        <div style="margin-bottom:22px;"></div>
+        <div class="ad-card">
+          <div id="customerList" style="color:#6C789A;font-size:13px;padding:12px 4px;">Loading customers from orders…</div>
+        </div>
+      </div>
+
+    </div><!-- ad-body -->
+  </div><!-- ad-main -->
+</div>
+
+<!-- ADD / EDIT PRODUCT MODAL -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal">
+    <h4 id="modalTitle">Add product</h4>
+    <div class="modal-field"><label>Product name</label><input type="text" id="pName" placeholder="e.g. Dell Latitude 5440"></div>
+    <div class="modal-field"><label>SKU / ID</label><input type="text" id="pSku" placeholder="e.g. DL-5440"></div>
+    <div class="modal-field"><label>Category</label>
+      <select id="pCat">
+        <option>Laptops</option><option>Networking</option><option>Servers</option>
+        <option>Peripherals</option><option>Software</option><option>Plans</option>
+      </select>
+    </div>
+    <div class="modal-field"><label>Price (৳)</label><input type="number" id="pPrice" placeholder="e.g. 92000"></div>
+    <div class="modal-field"><label>Spec / Description</label><input type="text" id="pSpec" placeholder="e.g. i5 · 16GB · 512GB SSD"></div>
+    <div class="modal-field"><label>Stock status</label>
+      <select id="pStock" onchange="toggleStockNum()">
+        <option value="in">In stock</option>
+        <option value="low">Low stock</option>
+      </select>
+    </div>
+    <div class="modal-field" id="stockNumField" style="display:none;"><label>Stock quantity</label><input type="number" id="pStockNum" placeholder="e.g. 3"></div>
+    <div class="modal-foot">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-save" onclick="saveProduct()">Save product</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h4>Delete product?</h4>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:0;" id="deleteMsg">This will permanently remove the product.</p>
+    <div class="modal-foot">
+      <button class="modal-cancel" onclick="closeDeleteModal()">Cancel</button>
+      <button class="modal-del" onclick="confirmDelete()">Yes, delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="dot2"></span><span id="toastMsg"></span></div>
+
+<!-- Firebase (module) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAfqcMBLr8ZVdSpFTdgYjqiAObAJL1itd8",
+  authDomain: "ts-web-53319.firebaseapp.com",
+  projectId: "ts-web-53319",
+  storageBucket: "ts-web-53319.firebasestorage.app",
+  messagingSenderId: "562970159023",
+  appId: "1:562970159023:web:80ab51402e55e74458f15a",
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Expose Firestore helpers to global scope
+window._db = db;
+window._col = (name) => collection(db, name);
+window._addDoc = addDoc;
+window._updateDoc = updateDoc;
+window._deleteDoc = deleteDoc;
+window._doc = (col, id) => doc(db, col, id);
+window._setDoc = setDoc;
+window._getDocs = getDocs;
+
+window.dispatchEvent(new Event('firebaseReady'));
+</script>
+
+<script src="products.js"></script>
+<script>
+// ---- Auth guard ----
+if(sessionStorage.getItem('ts_admin_auth') !== '1'){
+  location.href = 'admin-login.html';
+}
+
+function doLogout(){
+  sessionStorage.removeItem('ts_admin_auth');
+  location.href = 'admin-login.html';
+}
+
+function comingSoon(name){
+  showToast(name + ' — coming soon!');
+}
+
+function money(n){ return '৳' + Number(n).toLocaleString('en-US'); }
+function showToast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+// ---- Section switching ----
+function showSection(name){
+  ['dashboard','orders','catalog','customers'].forEach(s=>{
+    document.getElementById('sec-'+s).style.display = s===name ? '' : 'none';
+  });
+  document.querySelectorAll('.ad-nav a').forEach(a=>a.classList.remove('on'));
+  if(name==='dashboard') renderOrders();
+  if(name==='orders') renderOrders2();
+  if(name==='catalog') renderCatalog2();
+  if(name==='customers') renderCustomers();
+}
+window.showSection = showSection;
+
+// ---- Orders (localStorage) ----
+function getOrders(){ return JSON.parse(localStorage.getItem('ts_orders')||'[]'); }
+function setOrders(o){ localStorage.setItem('ts_orders', JSON.stringify(o)); }
+
+function statusPill(status){
+  const map = {
+    'Pending Verification':['st-pending','PENDING'],
+    'Paid':['st-processing','PAID'],
+    'Downloaded':['st-delivered','DOWNLOADED'],
+    'Rejected':['st-cancelled','REJECTED'],
+  };
+  const [cls,label] = map[status]||['st-pending',status.toUpperCase()];
+  return `<span class="status-pill ${cls}">${label}</span>`;
+}
+
+function orderRow(o, approve, reject){
+  let actions = o.status==='Pending Verification'
+    ? `<div class="row-actions"><span class="icon-btn" onclick="approveOrder('${o.id}')">Mark Paid</span><span class="icon-btn" onclick="rejectOrder('${o.id}')">Reject</span></div>`
+    : `<div class="row-actions"><span class="icon-btn">View</span></div>`;
+  return `<tr><td class="mono">#${o.id}</td><td class="mono">${money(o.total)}</td><td>${o.method}</td><td class="mono">${o.date}</td><td>${statusPill(o.status)}</td><td>${actions}</td></tr>`;
+}
+
+function renderOrders(){
+  const orders = getOrders();
+  document.getElementById('noOrders').style.display = orders.length ? 'none' : 'block';
+  document.getElementById('statSales').textContent = money(orders.reduce((s,o)=>s+o.total,0));
+  document.getElementById('statOrders').textContent = orders.length;
+  document.getElementById('statPending').textContent = orders.filter(o=>o.status==='Pending Verification').length;
+  document.getElementById('ordersBody').innerHTML = orders.map(o=>orderRow(o)).join('');
+}
+
+function renderOrders2(){
+  const orders = getOrders();
+  document.getElementById('noOrders2').style.display = orders.length ? 'none' : 'block';
+  document.getElementById('ordersBody2').innerHTML = orders.map(o=>orderRow(o)).join('');
+}
+
+window.approveOrder = function(id){
+  const orders = getOrders(); const o=orders.find(o=>o.id===id);
+  if(o){ o.status='Paid'; setOrders(orders); }
+  showToast('Order #'+id+' marked as Paid — Mailbox updated');
+  renderOrders(); renderOrders2();
+};
+window.rejectOrder = function(id){
+  const reason = prompt('Reason for rejecting order #'+id+':', 'Transaction ID not found');
+  if(reason===null) return;
+  const orders = getOrders(); const o=orders.find(o=>o.id===id);
+  if(o){ o.status='Rejected'; o.reason=reason; setOrders(orders); }
+  showToast('Order #'+id+' rejected');
+  renderOrders(); renderOrders2();
+};
+
+// ---- Customers (derived from orders) ----
+function renderCustomers(){
+  const orders = getOrders();
+  const el = document.getElementById('customerList');
+  if(!orders.length){ el.innerHTML='<p style="color:#6C789A;font-size:13px;">No customers yet — orders will show up here.</p>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Order</th><th>Total</th><th>Method</th><th>Date</th><th>Status</th></tr></thead><tbody>`
+    + orders.map(o=>`<tr><td class="mono">#${o.id}</td><td class="mono">${money(o.total)}</td><td>${o.method}</td><td class="mono">${o.date}</td><td>${statusPill(o.status)}</td></tr>`).join('')
+    + '</tbody></table>';
+}
+
+// ---- Products (Firestore) ----
+let firestoreReady = false;
+let products = [...PRODUCTS]; // fallback while Firestore loads
+let editingDocId = null;
+let deletingDocId = null;
+
+window.addEventListener('firebaseReady', async ()=>{
+  firestoreReady = true;
+  await loadProducts();
+});
+
+async function loadProducts(){
+  if(!firestoreReady) return;
+  try {
+    const snap = await window._getDocs(window._col('products'));
+    if(snap.empty){
+      // Seed Firestore with default products on first run
+      for(const p of PRODUCTS){
+        await window._setDoc(window._doc('products', p.id), p);
+      }
+      products = [...PRODUCTS];
+    } else {
+      products = snap.docs.map(d=>({...d.data(), _docId: d.id}));
+    }
+    renderCatalog2();
+    renderLowStock();
+    document.getElementById('statLow').textContent = products.filter(p=>p.stock==='low').length;
+  } catch(e){
+    console.error('Firestore load error:', e);
+    products = [...PRODUCTS];
+    renderCatalog2();
+    renderLowStock();
+  }
+}
+
+function renderLowStock(){
+  const low = products.filter(p=>p.stock==='low');
+  const el = document.getElementById('lowStockList');
+  if(!low.length){ el.innerHTML='<div style="color:#6C789A;font-size:12px;">No low stock items.</div>'; return; }
+  el.innerHTML = low.map(p=>`<div class="ad-low-item"><span>${p.name}</span><b>${p.stockNum} left</b></div>`).join('');
+}
+
+function renderCatalog2(){
+  document.getElementById('catalogBody2').innerHTML = products.map(p=>`
+    <tr>
+      <td>${p.name}</td>
+      <td class="mono">${p.id}</td>
+      <td>${p.cat}</td>
+      <td>${p.stock==='low' ? p.stockNum : '—'}</td>
+      <td class="mono">${money(p.price)}</td>
+      <td><div class="row-actions">
+        <span class="icon-btn" onclick="openEditModal('${p._docId||p.id}')">Edit</span>
+        <span class="icon-btn" onclick="openDeleteModal('${p._docId||p.id}','${p.name.replace(/'/g,"\\'")}')">Delete</span>
+      </div></td>
+    </tr>`).join('');
+}
+
+// ---- Modal helpers ----
+function toggleStockNum(){
+  document.getElementById('stockNumField').style.display = document.getElementById('pStock').value==='low' ? '' : 'none';
+}
+window.toggleStockNum = toggleStockNum;
+
+function closeModal(){ document.getElementById('productModal').classList.remove('show'); editingDocId=null; }
+window.closeModal = closeModal;
+
+function openAddModal(){
+  editingDocId = null;
+  document.getElementById('modalTitle').textContent = 'Add product';
+  document.getElementById('pName').value='';
+  document.getElementById('pSku').value='';
+  document.getElementById('pPrice').value='';
+  document.getElementById('pSpec').value='';
+  document.getElementById('pStock').value='in';
+  document.getElementById('pCat').value='Laptops';
+  document.getElementById('pStockNum').value='';
+  document.getElementById('stockNumField').style.display='none';
+  document.getElementById('productModal').classList.add('show');
+}
+window.openAddModal = openAddModal;
+
+function openEditModal(docId){
+  const p = products.find(x=>(x._docId||x.id)===docId);
+  if(!p) return;
+  editingDocId = docId;
+  document.getElementById('modalTitle').textContent = 'Edit product';
+  document.getElementById('pName').value = p.name;
+  document.getElementById('pSku').value = p.id;
+  document.getElementById('pPrice').value = p.price;
+  document.getElementById('pSpec').value = p.spec||'';
+  document.getElementById('pStock').value = p.stock;
+  document.getElementById('pCat').value = p.cat;
+  document.getElementById('pStockNum').value = p.stockNum||'';
+  document.getElementById('stockNumField').style.display = p.stock==='low' ? '' : 'none';
+  document.getElementById('productModal').classList.add('show');
+}
+window.openEditModal = openEditModal;
+
+async function saveProduct(){
+  const name = document.getElementById('pName').value.trim();
+  const id   = document.getElementById('pSku').value.trim();
+  const price= parseInt(document.getElementById('pPrice').value)||0;
+  const spec = document.getElementById('pSpec').value.trim();
+  const cat  = document.getElementById('pCat').value;
+  const stock= document.getElementById('pStock').value;
+  const stockNum = parseInt(document.getElementById('pStockNum').value)||0;
+  if(!name||!id){ showToast('Name and SKU are required'); return; }
+
+  const data = {id, name, price, spec, cat, stock, stockNum: stock==='low'?stockNum:null, icon:'<rect x="3" y="4" width="18" height="12" rx="2"/>'};
+
+  try {
+    if(editingDocId){
+      await window._updateDoc(window._doc('products', editingDocId), data);
+      showToast('Product updated — ' + name);
+    } else {
+      await window._setDoc(window._doc('products', id), data);
+      showToast('Product added — ' + name);
+    }
+    closeModal();
+    await loadProducts();
+  } catch(e){
+    showToast('Error: ' + e.message);
+  }
+}
+window.saveProduct = saveProduct;
+
+function openDeleteModal(docId, name){
+  deletingDocId = docId;
+  document.getElementById('deleteMsg').textContent = 'Delete "' + name + '"? This cannot be undone.';
+  document.getElementById('deleteModal').classList.add('show');
+}
+window.openDeleteModal = openDeleteModal;
+
+function closeDeleteModal(){ document.getElementById('deleteModal').classList.remove('show'); deletingDocId=null; }
+window.closeDeleteModal = closeDeleteModal;
+
+async function confirmDelete(){
+  if(!deletingDocId) return;
+  try {
+    await window._deleteDoc(window._doc('products', deletingDocId));
+    showToast('Product deleted');
+    closeDeleteModal();
+    await loadProducts();
+  } catch(e){
+    showToast('Error: ' + e.message);
+  }
+}
+window.confirmDelete = confirmDelete;
+
+// ---- Init ----
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderOrders();
+  // Render catalog from localStorage fallback while Firestore loads
+  document.getElementById('catalogBody2').innerHTML = PRODUCTS.map(p=>`
+    <tr><td>${p.name}</td><td class="mono">${p.id}</td><td>${p.cat}</td><td>${p.stock==='low'?p.stockNum:'—'}</td><td class="mono">${money(p.price)}</td>
+    <td><div class="row-actions"><span class="icon-btn" onclick="openEditModal('${p.id}')">Edit</span><span class="icon-btn" onclick="openDeleteModal('${p.id}','${p.name.replace(/'/g,"\\'")}')">Delete</span></div></td></tr>`).join('');
+  renderLowStock();
+});
+</script>
+</body>
+</html>

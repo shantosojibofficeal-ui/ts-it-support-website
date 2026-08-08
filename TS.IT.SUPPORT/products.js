@@ -1,0 +1,18 @@
+const PRODUCTS = [
+  {id:'DL-5440', name:'Dell Latitude 5440', spec:'i5 · 16GB · 512GB SSD', price:92000, cat:'Laptops', stock:'in',
+   icon:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/>'},
+  {id:'TPL-AX30', name:'TP‑Link AX3000 Router', spec:'Wi‑Fi 6 · Dual band', price:8500, cat:'Networking', stock:'in',
+   icon:'<path d="M2 8.5a15 15 0 0 1 20 0M5.5 12a10 10 0 0 1 13 0M9 15.5a5 5 0 0 1 6 0"/><circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/>'},
+  {id:'SY-D223', name:'Synology DS223 NAS', spec:'2‑bay · 2GB RAM', price:34900, cat:'Servers', stock:'low', stockNum:3,
+   icon:'<rect x="4" y="3" width="16" height="7" rx="1.5"/><rect x="4" y="14" width="16" height="7" rx="1.5"/><path d="M8 6.5h.01M8 17.5h.01"/>'},
+  {id:'MSO-365', name:'MS Office 365 Business', spec:'Annual · per user', price:6200, cat:'Software', stock:'in',
+   icon:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/>'},
+  {id:'HP-M126', name:'HP LaserJet Toner (Genuine)', spec:'For M126/M128 series', price:3400, cat:'Peripherals', stock:'low', stockNum:1,
+   icon:'<rect x="6" y="2" width="12" height="20" rx="6"/><path d="M12 2v8"/>'},
+  {id:'APC-650', name:'APC 650VA UPS', spec:'Line‑interactive · 1 yr wty', price:5800, cat:'Servers', stock:'low', stockNum:4,
+   icon:'<rect x="4" y="3" width="16" height="7" rx="1.5"/><rect x="4" y="14" width="16" height="7" rx="1.5"/>'},
+  {id:'CAT6-305', name:'Cat6 Cable (305m box)', spec:'Solid copper · indoor', price:7200, cat:'Networking', stock:'low', stockNum:2,
+   icon:'<path d="M2 8.5a15 15 0 0 1 20 0M5.5 12a10 10 0 0 1 13 0M9 15.5a5 5 0 0 1 6 0"/>'},
+  {id:'AMC-STD', name:'AMC — Standard Plan (1yr)', spec:'Remote + quarterly on‑site', price:36000, cat:'Plans', stock:'in',
+   icon:'<path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6l7-3Z"/>'},
+];
